@@ -1,0 +1,16 @@
+USE pandemic;
+
+SELECT
+    e.Entity,
+    e.Code,
+    AVG(n.Number_rabies)   AS avg_rabies,
+    MIN(n.Number_rabies)   AS min_rabies,
+    MAX(n.Number_rabies)   AS max_rabies,
+    SUM(n.Number_rabies)   AS sum_rabies
+FROM infectious_cases_normalized n
+JOIN entities e ON n.entity_id = e.id
+WHERE n.Number_rabies IS NOT NULL
+  AND n.Number_rabies != ''
+GROUP BY e.Entity, e.Code
+ORDER BY avg_rabies DESC
+LIMIT 10;
