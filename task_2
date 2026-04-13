@@ -1,0 +1,45 @@
+USE pandemic;
+
+-- Перевірка завантажених даних
+SELECT COUNT(*) FROM infectious_cases;
+
+-- Таблиця 1: entities (Entity + Code)
+CREATE TABLE entities AS
+SELECT DISTINCT
+    Entity,
+    Code
+FROM infectious_cases;
+
+-- Додаємо PRIMARY KEY
+ALTER TABLE entities
+    ADD COLUMN id INT AUTO_INCREMENT PRIMARY KEY FIRST;
+
+-- Таблиця 2: infectious_cases_normalized
+CREATE TABLE infectious_cases_normalized AS
+SELECT
+    ic.Year,
+    e.id AS entity_id,
+    ic.Number_yaws,
+    ic.polio_cases,
+    ic.cases_guinea_worm,
+    ic.Number_rabies,
+    ic.Number_malaria,
+    ic.Number_hiv,
+    ic.Number_tuberculosis,
+    ic.Number_smallpox,
+    ic.Number_cholera_cases
+FROM infectious_cases ic
+JOIN entities e
+    ON ic.Entity = e.Entity
+    AND (ic.Code = e.Code OR (ic.Code IS NULL AND e.Code IS NULL));
+
+-- Додаємо PRIMARY KEY та FOREIGN KEY
+ALTER TABLE infectious_cases_normalized
+    ADD COLUMN id INT AUTO_INCREMENT PRIMARY KEY FIRST;
+
+ALTER TABLE infectious_cases_normalized
+    ADD FOREIGN KEY (entity_id) REFERENCES entities(id);
+
+-- Перевірка
+SELECT * FROM entities LIMIT 5;
+SELECT * FROM infectious_cases_normalized LIMIT 5;
