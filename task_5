@@ -1,0 +1,22 @@
+USE pandemic;
+
+DROP FUNCTION IF EXISTS year_diff_from_now;
+
+DELIMITER //
+
+CREATE FUNCTION year_diff_from_now(input_year INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    RETURN TIMESTAMPDIFF(YEAR, MAKEDATE(input_year, 1), CURDATE());
+END //
+
+DELIMITER ;
+
+-- Застосовуємо функцію
+SELECT
+    Year,
+    MAKEDATE(Year, 1)          AS first_jan,
+    CURDATE()                  AS today,
+    year_diff_from_now(Year)   AS year_difference
+FROM infectious_cases_normalized;
